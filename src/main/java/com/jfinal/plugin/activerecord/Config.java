@@ -20,7 +20,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.sql.DataSource;
+
+import com.jfinal.config.Constants;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.cache.EhCache;
@@ -36,8 +39,9 @@ public class Config {
 	DataSource dataSource;
 	
 	Dialect dialect;
-	boolean showSql;
-	boolean devMode;
+	//boolean showSql;
+	//boolean devMode;
+	Constants constants;
 	int transactionLevel;
 	IContainerFactory containerFactory;
 	ICache cache;
@@ -46,7 +50,7 @@ public class Config {
 	
 	// For ActiveRecordPlugin only, dataSource can be null
 	Config(String name, DataSource dataSource, int transactionLevel) {
-		init(name, dataSource, new MysqlDialect(), false, false, transactionLevel, IContainerFactory.defaultContainerFactory, new EhCache());
+		init(name, dataSource, new MysqlDialect(), constants, transactionLevel, IContainerFactory.defaultContainerFactory, new EhCache());
 	}
 	
 	/**
@@ -60,14 +64,14 @@ public class Config {
 	 * @param containerFactory the containerFactory
 	 * @param cache the cache
 	 */
-	public Config(String name, DataSource dataSource, Dialect dialect, boolean showSql, boolean devMode, int transactionLevel, IContainerFactory containerFactory, ICache cache) {
+	public Config(String name, DataSource dataSource, Dialect dialect, Constants constants, int transactionLevel, IContainerFactory containerFactory, ICache cache) {
 		if (dataSource == null) {
 			throw new IllegalArgumentException("DataSource can not be null");
 		}
-		init(name, dataSource, dialect, showSql, devMode, transactionLevel, containerFactory, cache);
+		init(name, dataSource, dialect, constants, transactionLevel, containerFactory, cache);
 	}
 	
-	private void init(String name, DataSource dataSource, Dialect dialect, boolean showSql, boolean devMode, int transactionLevel, IContainerFactory containerFactory, ICache cache) {
+	private void init(String name, DataSource dataSource, Dialect dialect, Constants constants, int transactionLevel, IContainerFactory containerFactory, ICache cache) {
 		if (StrKit.isBlank(name)) {
 			throw new IllegalArgumentException("Config name can not be blank");
 		}
@@ -84,14 +88,15 @@ public class Config {
 		this.name = name.trim();
 		this.dataSource = dataSource;
 		this.dialect = dialect;
-		this.showSql = showSql;
-		this.devMode = devMode;
+		//this.showSql = showSql;
+		//this.devMode = devMode;
+		this.constants = constants;
 		// this.transactionLevel = transactionLevel;
 		this.setTransactionLevel(transactionLevel);
 		this.containerFactory = containerFactory;
 		this.cache = cache;
 		
-		this.sqlKit = new SqlKit(this.name, this.devMode);
+		this.sqlKit = new SqlKit(this.name);
 	}
 	
 	/**
@@ -105,7 +110,7 @@ public class Config {
 	 * Constructor with name, dataSource and dialect
 	 */
 	public Config(String name, DataSource dataSource, Dialect dialect) {
-		this(name, dataSource, dialect, false, false, DbKit.DEFAULT_TRANSACTION_LEVEL, IContainerFactory.defaultContainerFactory, new EhCache());
+		this(name, dataSource, dialect, null, DbKit.DEFAULT_TRANSACTION_LEVEL, IContainerFactory.defaultContainerFactory, new EhCache());
 	}
 	
 	private Config() {
@@ -113,7 +118,7 @@ public class Config {
 	}
 	
 	void setDevMode(boolean devMode) {
-		this.devMode = devMode;
+		//this.devMode = devMode;
 		this.sqlKit.setDevMode(devMode);
 	}
 	
@@ -131,8 +136,7 @@ public class Config {
 	static Config createBrokenConfig() {
 		Config ret = new Config();
 		ret.dialect = new MysqlDialect();
-		ret.showSql = false;
-		ret.devMode = false;
+		ret.constants = null;
 		ret.transactionLevel = DbKit.DEFAULT_TRANSACTION_LEVEL;
 		ret.containerFactory = IContainerFactory.defaultContainerFactory;
 		ret.cache = new EhCache();
@@ -168,11 +172,17 @@ public class Config {
 	}
 	
 	public boolean isShowSql() {
-		return showSql;
+		if(this.constants != null){
+			return this.constants.getDevMode();
+		}
+		return false;
 	}
 	
 	public boolean isDevMode() {
-		return devMode;
+		if(this.constants != null){
+			return this.constants.getDevMode();
+		}
+		return false;
 	}
 	
 	// --------
@@ -195,7 +205,7 @@ public class Config {
 		Connection conn = threadLocal.get();
 		if (conn != null)
 			return conn;
-		return showSql ? new SqlReporter(dataSource.getConnection()).getConnection() : dataSource.getConnection();
+		return isShowSql() ? new SqlReporter(dataSource.getConnection()).getConnection() : dataSource.getConnection();
 	}
 	
 	/**

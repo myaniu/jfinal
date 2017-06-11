@@ -21,6 +21,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+
 /**
  * Db. Powerful database query and update tool box.
  */
@@ -42,7 +45,7 @@ public class Db {
 	/**
 	 * @see #query(String, String, Object...)
 	 */
-	public static <T> List<T> query(String sql, Object... paras) {
+	@Nonnull public static <T> List<T> query(String sql, Object... paras) {
 		return DbPro.MAIN.query(sql, paras);
 	}
 	
@@ -50,7 +53,7 @@ public class Db {
 	 * @see #query(String, Object...)
 	 * @param sql an SQL statement
 	 */
-	public static <T> List<T> query(String sql) {
+	@Nonnull public static <T> List<T> query(String sql) {
 		return DbPro.MAIN.query(sql);
 	}
 	
@@ -61,7 +64,7 @@ public class Db {
 	 * @return Object[] if your sql has select more than one column,
 	 * 			and it return Object if your sql has select only one column.
 	 */
-	public static <T> T queryFirst(String sql, Object... paras) {
+	@CheckForNull public static <T> T queryFirst(String sql, Object... paras) {
 		return DbPro.MAIN.queryFirst(sql, paras);
 	}
 	
@@ -69,7 +72,7 @@ public class Db {
 	 * @see #queryFirst(String, Object...)
 	 * @param sql an SQL statement
 	 */
-	public static <T> T queryFirst(String sql) {
+	@CheckForNull public static <T> T queryFirst(String sql) {
 		return DbPro.MAIN.queryFirst(sql);
 	}
 	
@@ -81,115 +84,115 @@ public class Db {
 	 * @param paras the parameters of sql
 	 * @return <T> T
 	 */
-	public static <T> T queryColumn(String sql, Object... paras) {
+	@CheckForNull public static <T> T queryColumn(String sql, Object... paras) {
 		return DbPro.MAIN.queryColumn(sql, paras);
 	}
 	
-	public static <T> T queryColumn(String sql) {
+	@CheckForNull public static <T> T queryColumn(String sql) {
 		return DbPro.MAIN.queryColumn(sql);
 	}
 	
-	public static String queryStr(String sql, Object... paras) {
+	@CheckForNull public static String queryStr(String sql, Object... paras) {
 		return DbPro.MAIN.queryStr(sql, paras);
 	}
 	
-	public static String queryStr(String sql) {
+	@CheckForNull public static String queryStr(String sql) {
 		return DbPro.MAIN.queryStr(sql);
 	}
 	
-	public static Integer queryInt(String sql, Object... paras) {
+	@CheckForNull public static Integer queryInt(String sql, Object... paras) {
 		return DbPro.MAIN.queryInt(sql, paras);
 	}
 	
-	public static Integer queryInt(String sql) {
+	@CheckForNull public static Integer queryInt(String sql) {
 		return DbPro.MAIN.queryInt(sql);
 	}
 	
-	public static Long queryLong(String sql, Object... paras) {
+	@CheckForNull public static Long queryLong(String sql, Object... paras) {
 		return DbPro.MAIN.queryLong(sql, paras);
 	}
 	
-	public static Long queryLong(String sql) {
+	@CheckForNull public static Long queryLong(String sql) {
 		return DbPro.MAIN.queryLong(sql);
 	}
 	
-	public static Double queryDouble(String sql, Object... paras) {
+	@CheckForNull public static Double queryDouble(String sql, Object... paras) {
 		return DbPro.MAIN.queryDouble(sql, paras);
 	}
 	
-	public static Double queryDouble(String sql) {
+	@CheckForNull public static Double queryDouble(String sql) {
 		return DbPro.MAIN.queryDouble(sql);
 	}
 	
-	public static Float queryFloat(String sql, Object... paras) {
+	@CheckForNull public static Float queryFloat(String sql, Object... paras) {
 		return DbPro.MAIN.queryFloat(sql, paras);
 	}
 	
-	public static Float queryFloat(String sql) {
+	@CheckForNull public static Float queryFloat(String sql) {
 		return DbPro.MAIN.queryFloat(sql);
 	}
 	
-	public static java.math.BigDecimal queryBigDecimal(String sql, Object... paras) {
+	@CheckForNull public static java.math.BigDecimal queryBigDecimal(String sql, Object... paras) {
 		return DbPro.MAIN.queryBigDecimal(sql, paras);
 	}
 	
-	public static java.math.BigDecimal queryBigDecimal(String sql) {
+	@CheckForNull public static java.math.BigDecimal queryBigDecimal(String sql) {
 		return DbPro.MAIN.queryBigDecimal(sql);
 	}
 	
-	public static byte[] queryBytes(String sql, Object... paras) {
+	@CheckForNull public static byte[] queryBytes(String sql, Object... paras) {
 		return DbPro.MAIN.queryBytes(sql, paras);
 	}
 	
-	public static byte[] queryBytes(String sql) {
+	@CheckForNull public static byte[] queryBytes(String sql) {
 		return DbPro.MAIN.queryBytes(sql);
 	}
 	
-	public static java.util.Date queryDate(String sql, Object... paras) {
+	@CheckForNull public static java.util.Date queryDate(String sql, Object... paras) {
 		return DbPro.MAIN.queryDate(sql, paras);
 	}
 	
-	public static java.util.Date queryDate(String sql) {
+	@CheckForNull public static java.util.Date queryDate(String sql) {
 		return DbPro.MAIN.queryDate(sql);
 	}
 	
-	public static java.sql.Time queryTime(String sql, Object... paras) {
+	@CheckForNull public static java.sql.Time queryTime(String sql, Object... paras) {
 		return DbPro.MAIN.queryTime(sql, paras);
 	}
 	
-	public static java.sql.Time queryTime(String sql) {
+	@CheckForNull public static java.sql.Time queryTime(String sql) {
 		return DbPro.MAIN.queryTime(sql);
 	}
 	
-	public static java.sql.Timestamp queryTimestamp(String sql, Object... paras) {
+	@CheckForNull public static java.sql.Timestamp queryTimestamp(String sql, Object... paras) {
 		return DbPro.MAIN.queryTimestamp(sql, paras);
 	}
 	
-	public static java.sql.Timestamp queryTimestamp(String sql) {
+	@CheckForNull public static java.sql.Timestamp queryTimestamp(String sql) {
 		return DbPro.MAIN.queryTimestamp(sql);
 	}
 	
-	public static Boolean queryBoolean(String sql, Object... paras) {
+	@CheckForNull public static Boolean queryBoolean(String sql, Object... paras) {
 		return DbPro.MAIN.queryBoolean(sql, paras);
 	}
 	
-	public static Boolean queryBoolean(String sql) {
+	@CheckForNull public static Boolean queryBoolean(String sql) {
 		return DbPro.MAIN.queryBoolean(sql);
 	}
 	
-	public static Short queryShort(String sql, Object... paras) {
+	@CheckForNull public static Short queryShort(String sql, Object... paras) {
 		return DbPro.MAIN.queryShort(sql, paras);
 	}
 	
-	public static Short queryShort(String sql) {
+	@CheckForNull public static Short queryShort(String sql) {
 		return DbPro.MAIN.queryShort(sql);
 	}
 	
-	public static Number queryNumber(String sql, Object... paras) {
+	@CheckForNull public static Number queryNumber(String sql, Object... paras) {
 		return DbPro.MAIN.queryNumber(sql, paras);
 	}
 	
-	public static Number queryNumber(String sql) {
+	@CheckForNull public static Number queryNumber(String sql) {
 		return DbPro.MAIN.queryNumber(sql);
 	}
 	// 26 queryXxx method under -----------------------------------------------
@@ -228,7 +231,7 @@ public class Db {
 	/**
 	 * @see #find(String, String, Object...)
 	 */
-	public static List<Record> find(String sql, Object... paras) {
+	@Nonnull public static List<Record> find(String sql, Object... paras) {
 		return DbPro.MAIN.find(sql, paras);
 	}
 	
@@ -236,7 +239,7 @@ public class Db {
 	 * @see #find(String, String, Object...)
 	 * @param sql the sql statement
 	 */
-	public static List<Record> find(String sql) {
+	@Nonnull public static List<Record> find(String sql) {
 		return DbPro.MAIN.find(sql);
 	}
 	
@@ -246,7 +249,7 @@ public class Db {
 	 * @param paras the parameters of sql
 	 * @return the Record object
 	 */
-	public static Record findFirst(String sql, Object... paras) {
+	@CheckForNull public static Record findFirst(String sql, Object... paras) {
 		return DbPro.MAIN.findFirst(sql, paras);
 	}
 	
@@ -254,7 +257,7 @@ public class Db {
 	 * @see #findFirst(String, Object...)
 	 * @param sql an SQL statement
 	 */
-	public static Record findFirst(String sql) {
+	@CheckForNull public static Record findFirst(String sql) {
 		return DbPro.MAIN.findFirst(sql);
 	}
 	
@@ -267,7 +270,7 @@ public class Db {
 	 * @param tableName the table name of the table
 	 * @param idValue the id value of the record
 	 */
-	public static Record findById(String tableName, Object idValue) {
+	@CheckForNull public static Record findById(String tableName, Object idValue) {
 		return DbPro.MAIN.findById(tableName, idValue);
 	}
 	
@@ -282,7 +285,7 @@ public class Db {
 	 * @param primaryKey the primary key of the table, composite primary key is separated by comma character: ","
 	 * @param idValue the id value of the record, it can be composite id values
 	 */
-	public static Record findById(String tableName, String primaryKey, Object... idValue) {
+	@CheckForNull public static Record findById(String tableName, String primaryKey, Object... idValue) {
 		return DbPro.MAIN.findById(tableName, primaryKey, idValue);
 	}
 	
@@ -355,26 +358,26 @@ public class Db {
 	 * @param paras the parameters of sql
 	 * @return the Page object
 	 */
-	public static Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public static Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
 		return DbPro.MAIN.paginate(pageNumber, pageSize, select, sqlExceptSelect, paras);
 	}
 	
-	public static Page<Record> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public static Page<Record> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
 		return DbPro.MAIN.paginate(pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
 	}
 	
 	/**
 	 * @see #paginate(String, int, int, String, String, Object...)
 	 */
-	public static Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
+	@Nonnull public static Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
 		return DbPro.MAIN.paginate(pageNumber, pageSize, select, sqlExceptSelect);
 	}
 	
-	public static Page<Record> paginateByFullSql(int pageNumber, int pageSize, String totalRowSql, String findSql, Object... paras) {
+	@Nonnull public static Page<Record> paginateByFullSql(int pageNumber, int pageSize, String totalRowSql, String findSql, Object... paras) {
 		return DbPro.MAIN.paginateByFullSql(pageNumber, pageSize, totalRowSql, findSql, paras);
 	}
 	
-	public static Page<Record> paginateByFullSql(int pageNumber, int pageSize, boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
+	@Nonnull public static Page<Record> paginateByFullSql(int pageNumber, int pageSize, boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
 		return DbPro.MAIN.paginateByFullSql(pageNumber, pageSize, isGroupBySql, totalRowSql, findSql, paras);
 	}
 	
@@ -482,14 +485,14 @@ public class Db {
 	 * @param key the key used to get date from cache
 	 * @return the list of Record
 	 */
-	public static List<Record> findByCache(String cacheName, Object key, String sql, Object... paras) {
+	@Nonnull public static List<Record> findByCache(String cacheName, Object key, String sql, Object... paras) {
 		return DbPro.MAIN.findByCache(cacheName, key, sql, paras);
 	}
 	
 	/**
 	 * @see #findByCache(String, Object, String, Object...)
 	 */
-	public static List<Record> findByCache(String cacheName, Object key, String sql) {
+	@Nonnull public static List<Record> findByCache(String cacheName, Object key, String sql) {
 		return DbPro.MAIN.findByCache(cacheName, key, sql);
 	}
 	
@@ -502,14 +505,14 @@ public class Db {
 	 * @param paras the parameters of sql
 	 * @return the Record object
 	 */
-	public static Record findFirstByCache(String cacheName, Object key, String sql, Object... paras) {
+	@CheckForNull public static Record findFirstByCache(String cacheName, Object key, String sql, Object... paras) {
 		return DbPro.MAIN.findFirstByCache(cacheName, key, sql, paras);
 	}
 	
 	/**
 	 * @see #findFirstByCache(String, Object, String, Object...)
 	 */
-	public static Record findFirstByCache(String cacheName, Object key, String sql) {
+	@CheckForNull public static Record findFirstByCache(String cacheName, Object key, String sql) {
 		return DbPro.MAIN.findFirstByCache(cacheName, key, sql);
 	}
 	
@@ -518,18 +521,18 @@ public class Db {
 	 * @see #paginate(int, int, String, String, Object...)
 	 * @return Page
 	 */
-	public static Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public static Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
 		return DbPro.MAIN.paginateByCache(cacheName, key, pageNumber, pageSize, select, sqlExceptSelect, paras);
 	}
 	
-	public static Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public static Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
 		return DbPro.MAIN.paginateByCache(cacheName, key, pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
 	}
 	
 	/**
 	 * @see #paginateByCache(String, Object, int, int, String, String, Object...)
 	 */
-	public static Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
+	@Nonnull public static Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
 		return DbPro.MAIN.paginateByCache(cacheName, key, pageNumber, pageSize, select, sqlExceptSelect);
 	}
 	
@@ -609,15 +612,15 @@ public class Db {
     	return DbPro.MAIN.getSqlPara(key, paras);
     }
     
-    public static List<Record> find(SqlPara sqlPara) {
+    @Nonnull public static List<Record> find(SqlPara sqlPara) {
     	return DbPro.MAIN.find(sqlPara);
     }
     
-    public static Record findFirst(SqlPara sqlPara) {
+    @CheckForNull public static Record findFirst(SqlPara sqlPara) {
     	return DbPro.MAIN.findFirst(sqlPara);
     }
     
-    public static Page<Record> paginate(int pageNumber, int pageSize, SqlPara sqlPara) {
+    @Nonnull public static Page<Record> paginate(int pageNumber, int pageSize, SqlPara sqlPara) {
     	return DbPro.MAIN.paginate(pageNumber, pageSize, sqlPara);
     }
 }

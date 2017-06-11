@@ -25,7 +25,11 @@ package com.jfinal.log;
  * 5. FATAL (the most serious)
  */
 public abstract class Log {
-	
+	public static final int LEVEL_DEBUG = 1;
+	public static final int LEVEL_INFO  = 2;
+	public static final int LEVEL_WARN  = 3;
+	public static final int LEVEL_ERROR = 4;
+	public static final int LEVEL_FATAL = 5;
 	private static ILogFactory defaultLogFactory = null;
 	
 	static {
@@ -44,6 +48,12 @@ public abstract class Log {
 		}
 	}
 	
+	static void setAllLevel(int level){
+		if(defaultLogFactory != null){
+			defaultLogFactory.setLevel(level);
+		}
+	}
+	
 	static void setDefaultLogFactory(ILogFactory defaultLogFactory) {
 		if (defaultLogFactory == null) {
 			throw new IllegalArgumentException("defaultLogFactory can not be null.");
@@ -58,6 +68,8 @@ public abstract class Log {
 	public static Log getLog(String name) {
 		return defaultLogFactory.getLog(name);
 	}
+	
+	public abstract void setLevel(int level);
 	
 	public abstract void debug(String message);
 	

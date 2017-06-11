@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017, James Zhan 詹波 (jfinal@126.com).
+ * Copyright (c) 2011-2016, James Zhan 詹波 (jfinal@126.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.jfinal.server;
 
 import java.io.File;
+
 import com.jfinal.kit.PathKit;
 
 /**
@@ -30,6 +31,9 @@ public class ServerFactory {
 	private ServerFactory() {
 		
 	}
+	public static IServer getHttpsServer(String webAppDir,String host, int port, String context, String keyStorePath,String keyStorePassword,String keyManagerPassword) {
+		return new JettyServer(webAppDir, host, port, context, keyStorePath, keyStorePassword, keyManagerPassword);
+	}
 	
 	/**
 	 * Return web server.
@@ -40,28 +44,45 @@ public class ServerFactory {
 	 * @param context the context
 	 * @param scanIntervalSeconds the scan interval seconds
 	 */
-	public static IServer getServer(String webAppDir, int port, String context, int scanIntervalSeconds) {
-		return new JettyServer(webAppDir, port, context, scanIntervalSeconds);
+	public static IServer getServer(String webAppDir, String host, int port, String context, int scanIntervalSeconds) {
+		return new JettyServer(webAppDir, host, port, context, scanIntervalSeconds);
 	}
 	
-	public static IServer getServer(String webAppDir, int port, String context) {
-		return getServer(webAppDir, port, context, DEFAULT_SCANINTERVALSECONDS);
+	public static IServer getServer(String webAppDir, String host, int port, String context) {
+		return getServer(webAppDir, host, port, context, DEFAULT_SCANINTERVALSECONDS);
 	}
 	
 	public static IServer getServer(int port, String context, int scanIntervalSeconds) {
-		return getServer(detectWebAppDir(), port, context, scanIntervalSeconds);
+		return getServer(detectWebAppDir(), "127.0.0.1",port, context, scanIntervalSeconds);
+	}
+	
+	public static IServer getServer(String host, int port, String context, int scanIntervalSeconds) {
+		return getServer(detectWebAppDir(), host, port, context, scanIntervalSeconds);
 	}
 	
 	public static IServer getServer(int port, String context) {
-		return getServer(detectWebAppDir(), port, context, DEFAULT_SCANINTERVALSECONDS);
+		return getServer(detectWebAppDir(), "127.0.0.1", port, context, DEFAULT_SCANINTERVALSECONDS);
+	}
+	
+	public static IServer getServer(String host, int port, String context) {
+		return getServer(detectWebAppDir(), host, port, context, DEFAULT_SCANINTERVALSECONDS);
 	}
 	
 	public static IServer getServer(int port) {
-		return getServer(detectWebAppDir(), port, "/", DEFAULT_SCANINTERVALSECONDS);
+		return getServer(detectWebAppDir(), "127.0.0.1",port, "/", DEFAULT_SCANINTERVALSECONDS);
 	}
 	
+	public static IServer getServer(String host, int port) {
+		return getServer(detectWebAppDir(), host, port, "/", DEFAULT_SCANINTERVALSECONDS);
+	}
+
+	
 	public static IServer getServer() {
-		return getServer(detectWebAppDir(), DEFAULT_PORT, "/", DEFAULT_SCANINTERVALSECONDS);
+		return getServer(detectWebAppDir(), "127.0.0.1", DEFAULT_PORT, "/", DEFAULT_SCANINTERVALSECONDS);
+	}
+	
+	public static IServer getServer(String host) {
+		return getServer(detectWebAppDir(), host, DEFAULT_PORT, "/", DEFAULT_SCANINTERVALSECONDS);
 	}
 	
 	private static String detectWebAppDir() {

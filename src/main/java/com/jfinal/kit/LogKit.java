@@ -24,7 +24,7 @@ import com.jfinal.log.Log;
 public class LogKit {
 	
 	private static class Holder {
-		private static Log log = Log.getLog(LogKit.class);
+		private static Log log = Log.getLog("core");
 	}
 	
 	/**

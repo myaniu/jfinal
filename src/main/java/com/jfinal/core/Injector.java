@@ -19,7 +19,10 @@ package com.jfinal.core;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.servlet.http.HttpServletRequest;
+
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.ActiveRecordException;
 import com.jfinal.plugin.activerecord.Model;
@@ -30,7 +33,6 @@ import com.jfinal.plugin.activerecord.TableMapping;
  * Injector.
  */
 public class Injector {
-	
 	private static <T> T createInstance(Class<T> objClass) {
 		try {
 			return objClass.newInstance();
@@ -120,7 +122,9 @@ public class Injector {
 				if (skipConvertError) {
 					continue ;
 				} else {
-					throw new ActiveRecordException("The model attribute " + attrName + " is not exists.");
+					//throw new ActiveRecordException("The model attribute " + attrName + " is not exists.");
+					LogKit.warn("Maybe the model attribute " + attrName + " is not exists. Please check parameter's name!");
+					continue;
 				}
 			}
 			

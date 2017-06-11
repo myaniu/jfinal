@@ -19,7 +19,10 @@ package com.jfinal.plugin.activerecord;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.sql.DataSource;
+
+import com.jfinal.config.Constants;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.IPlugin;
 import com.jfinal.plugin.activerecord.cache.ICache;
@@ -35,7 +38,10 @@ import com.jfinal.plugin.activerecord.sql.SqlKit;
 public class ActiveRecordPlugin implements IPlugin {
 	
 	private IDataSourceProvider dataSourceProvider = null;
-	private Boolean devMode = null;
+	
+	private Constants constants = null;
+	
+	//private Boolean devMode = null;
 	
 	private Config config = null;
 	
@@ -143,20 +149,18 @@ public class ActiveRecordPlugin implements IPlugin {
 		config.cache = cache;
 		return this;
 	}
-	
-	public ActiveRecordPlugin setShowSql(boolean showSql) {
-		config.showSql = showSql;
-		return this;
-	}
+
 	
 	public ActiveRecordPlugin setDevMode(boolean devMode) {
-		this.devMode = devMode;
 		config.setDevMode(devMode);
 		return this;
 	}
 	
 	public Boolean getDevMode() {
-		return devMode;
+		if(this.constants != null){
+			return this.constants.getDevMode();
+		}
+		return Boolean.FALSE;
 	}
 	
 	public ActiveRecordPlugin setDialect(Dialect dialect) {
@@ -287,6 +291,24 @@ public class ActiveRecordPlugin implements IPlugin {
 	 */
 	public static void useAsDataTransfer() {
 		useAsDataTransfer(new com.jfinal.plugin.activerecord.dialect.MysqlDialect(), IContainerFactory.defaultContainerFactory, new com.jfinal.plugin.activerecord.cache.EhCache());
+	}
+	
+	public final Constants getConstants() {
+		return constants;
+	}
+
+	public final ActiveRecordPlugin setConstants(Constants constants) {
+		this.constants = constants;
+		this.config.constants = constants;
+		return this;
+	}
+	
+	public final String getConfigName() {
+		return this.config.getName();
+	}
+	
+	public final List<Table> getTableList() {
+		return tableList;
 	}
 }
 

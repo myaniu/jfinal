@@ -20,12 +20,19 @@ import java.io.File;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SessionManager;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
+
 import com.jfinal.core.Const;
 import com.jfinal.kit.FileKit;
 import com.jfinal.kit.LogKit;
@@ -40,66 +47,100 @@ class JettyServer implements IServer {
 	
 	private String webAppDir;
 	private int port;
+	private String host="127.0.0.1";
 	private String context;
 	private int scanIntervalSeconds;
 	private boolean running = false;
 	private Server server;
 	private WebAppContext webApp;
 	
-	JettyServer(String webAppDir, int port, String context, int scanIntervalSeconds) {
-		if (webAppDir == null) {
+	private String keyStorePath = null;
+	private String keyStorePassword = null;
+	private String keyManagerPassword = null;
+	
+	JettyServer(String webAppDir,String host, int port, String context, int scanIntervalSeconds) {
+		if (webAppDir == null)
 			throw new IllegalStateException("Invalid webAppDir of web server: " + webAppDir);
-		}
-		if (port < 0 || port > 65535) {
+		if (port < 0 || port > 65536)
 			throw new IllegalArgumentException("Invalid port of web server: " + port);
-		}
-		if (StrKit.isBlank(context)) {
+		if (StrKit.isBlank(context))
 			throw new IllegalStateException("Invalid context of web server: " + context);
-		}
 		
 		this.webAppDir = webAppDir;
 		this.port = port;
+		this.host = host;
 		this.context = context;
 		this.scanIntervalSeconds = scanIntervalSeconds;
 	}
 	
+	JettyServer(String webAppDir, String host,int port, String context, String keyStorePath,String keyStorePassword,String keyManagerPassword) {
+		this(webAppDir,host,port,context,0);
+		this.keyManagerPassword = keyManagerPassword;
+		this.keyStorePassword = keyStorePassword;
+		this.host = host;
+		this.keyStorePath = keyStorePath;
+	}
+	
 	public void start() {
 		if (!running) {
-			try {
-				running = true;
-				doStart();
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-				LogKit.error(e.getMessage(), e);
-			}
+			try {doStart();} catch (Exception e) {LogKit.error(e.getMessage(), e);}
+			running = true;
 		}
 	}
 	
 	public void stop() {
 		if (running) {
-			try {server.stop();} catch (Exception e) {LogKit.error(e.getMessage(), e);}
+			try {webApp.stop();server.stop();} catch (Exception e) {e.printStackTrace();}
 			running = false;
 		}
 	}
 	
 	private void doStart() {
-		if (!available(port)) {
+		if (!available(port))
 			throw new IllegalStateException("port: " + port + " already in use!");
-		}
 		
 		deleteSessionData();
 		
 		System.out.println("Starting JFinal " + Const.JFINAL_VERSION);
 		server = new Server();
-		SelectChannelConnector connector = new SelectChannelConnector();
-		connector.setPort(port);
-		server.addConnector(connector);
-		webApp = new WebAppContext();
-		webApp.setThrowUnavailableOnStartupException(true);	// 在启动过程中允许抛出异常终止启动并退出 JVM
+		//httl配置。
+		if(null == this.keyStorePath){
+			HttpConfiguration http_config = new HttpConfiguration();	        // HTTP connector
+	        ServerConnector connector = new ServerConnector(server,new HttpConnectionFactory(http_config));
+			connector.setReuseAddress(true);
+			connector.setIdleTimeout(30000);
+			connector.setPort(port);
+			connector.setHost(host);
+			server.addConnector(connector);
+		}else{
+			//https 配置
+			HttpConfiguration https_config = new HttpConfiguration();
+			https_config.setSecureScheme("https");
+			https_config.setSecurePort(port);
+			https_config.setOutputBufferSize(32768);
+			https_config.addCustomizer(new SecureRequestCustomizer());
+			SslContextFactory sslContextFactory = new SslContextFactory();
+	        sslContextFactory.setKeyStorePath(this.keyStorePath);
+	        sslContextFactory.setKeyStorePassword(this.keyStorePassword);
+	        sslContextFactory.setKeyManagerPassword(this.keyManagerPassword);
+	        ServerConnector httpsConnector = new ServerConnector(server,
+	                new SslConnectionFactory(sslContextFactory,"http/1.1"),
+	                new HttpConnectionFactory(https_config));
+	        httpsConnector.setPort(port);
+	        httpsConnector.setHost(host);
+	        httpsConnector.setIdleTimeout(500000);
+	        server.addConnector(httpsConnector);
+		}
+		
+		webApp = new WebAppContext();		
+		
 		webApp.setContextPath(context);
-		webApp.setResourceBase(webAppDir);	// webApp.setWar(webAppDir);
-		webApp.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
-		webApp.setInitParameter("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "false");	// webApp.setInitParams(Collections.singletonMap("org.mortbay.jetty.servlet.Default.useFileMappedBuffer", "false"));
+		webApp.setResourceBase(webAppDir);
+		webApp.setMaxFormContentSize(81920000);
+		webApp.getInitParams().put("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
+		webApp.getInitParams().put("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "true");
+		webApp.getInitParams().put("org.eclipse.jetty.server.Request.maxFormContentSize", "-1");
+		
 		persistSession(webApp);
 		
 		server.setHandler(webApp);
@@ -129,7 +170,7 @@ class JettyServer implements IServer {
 		try {
 			System.out.println("Starting web server on port: " + port);
 			server.start();
-			System.out.println("Starting Complete. Welcome To The JFinal World :)");
+			System.out.println("Starting Complete. Welcome To The JFinal World (仨多ta爹特别版) :)");
 			server.join();
 		} catch (Exception e) {
 			LogKit.error(e.getMessage(), e);
@@ -137,18 +178,16 @@ class JettyServer implements IServer {
 		}
 		return;
 	}
-	
+
 	private void changeClassLoader(WebAppContext webApp) {
 		try {
 			String classPath = getClassPath();
-			JFinalClassLoader jfcl = new JFinalClassLoader(webApp, classPath);
-			// jfcl.addClassPath(classPath);
-			webApp.setClassLoader(jfcl);
+			JFinalClassLoader wacl = new JFinalClassLoader(webApp, classPath);
+			webApp.setClassLoader(wacl);
 		} catch (IOException e) {
 			LogKit.error(e.getMessage(), e);
 		}
 	}
-	
 	private String getClassPath() {
 		return System.getProperty("java.class.path");
 	}
@@ -164,9 +203,8 @@ class JettyServer implements IServer {
 	
 	private String getStoreDir() {
 		String storeDir = PathKit.getWebRootPath() + "/../../session_data" + context;
-		if ("\\".equals(File.separator)) {
+		if ("\\".equals(File.separator))
 			storeDir = storeDir.replaceAll("/", "\\\\");
-		}
 		return storeDir;
 	}
 	
@@ -175,12 +213,20 @@ class JettyServer implements IServer {
 		
 		SessionManager sm = webApp.getSessionHandler().getSessionManager();
 		if (sm instanceof HashSessionManager) {
-			((HashSessionManager)sm).setStoreDirectory(new File(storeDir));
+			try {
+				((HashSessionManager)sm).setStoreDirectory(new File(storeDir));
+			} catch (IOException e) {
+				LogKit.logNothing(e);
+			}
 			return ;
 		}
 		
 		HashSessionManager hsm = new HashSessionManager();
-		hsm.setStoreDirectory(new File(storeDir));
+		try {
+			hsm.setStoreDirectory(new File(storeDir));
+		} catch (IOException e) {
+			LogKit.logNothing(e);
+		}
 		SessionHandler sh = new SessionHandler();
 		sh.setSessionManager(hsm);
 		webApp.setSessionHandler(sh);
