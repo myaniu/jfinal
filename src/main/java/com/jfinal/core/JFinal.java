@@ -155,7 +155,11 @@ public final class JFinal {
 	 * 用于在 Eclipse 中，通过创建 main 方法的方式启动项目，支持执加载
 	 */
 	public static void start(String webAppDir, int port, String context, int scanIntervalSeconds) {
-		server = ServerFactory.getServer(webAppDir, port, context, scanIntervalSeconds);
+		server = ServerFactory.getServer(webAppDir,"127.0.0.1", port, context, scanIntervalSeconds);
+		server.start();
+	}
+	public static void start(String webAppDir, String host, int port, String context, int scanIntervalSeconds) {
+		server = ServerFactory.getServer(webAppDir, host, port, context, scanIntervalSeconds);
 		server.start();
 	}
 	

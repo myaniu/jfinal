@@ -20,12 +20,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SessionManager;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
+
 import com.jfinal.core.Const;
 import com.jfinal.kit.FileKit;
 import com.jfinal.kit.LogKit;
@@ -93,15 +97,22 @@ public class JettyServerForIDEA implements IServer {
 		
 		System.out.println("Starting JFinal " + Const.JFINAL_VERSION);
 		server = new Server();
-		SelectChannelConnector connector = new SelectChannelConnector();
+		HttpConfiguration http_config = new HttpConfiguration();	        // HTTP connector
+        ServerConnector connector = new ServerConnector(server,new HttpConnectionFactory(http_config));
+		connector.setReuseAddress(true);
+		connector.setIdleTimeout(30000);
 		connector.setPort(port);
 		server.addConnector(connector);
+		
 		webApp = new WebAppContext();
 		webApp.setThrowUnavailableOnStartupException(true);	// 在启动过程中允许抛出异常终止启动并退出 JVM
 		webApp.setContextPath(context);
-		webApp.setResourceBase(webAppDir);	// webApp.setWar(webAppDir);
-		webApp.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
-		webApp.setInitParameter("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "false");	// webApp.setInitParams(Collections.singletonMap("org.mortbay.jetty.servlet.Default.useFileMappedBuffer", "false"));
+		webApp.setResourceBase(webAppDir);
+		webApp.setMaxFormContentSize(81920000);
+		webApp.getInitParams().put("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
+		webApp.getInitParams().put("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "true");
+		webApp.getInitParams().put("org.eclipse.jetty.server.Request.maxFormContentSize", "-1");
+		
 		persistSession(webApp);
 		
 		server.setHandler(webApp);
@@ -173,16 +184,24 @@ public class JettyServerForIDEA implements IServer {
 	}
 	
 	private void persistSession(WebAppContext webApp) {
-		String storeDir = getStoreDir();
+String storeDir = getStoreDir();
 		
 		SessionManager sm = webApp.getSessionHandler().getSessionManager();
 		if (sm instanceof HashSessionManager) {
-			((HashSessionManager)sm).setStoreDirectory(new File(storeDir));
+			try {
+				((HashSessionManager)sm).setStoreDirectory(new File(storeDir));
+			} catch (IOException e) {
+				LogKit.logNothing(e);
+			}
 			return ;
 		}
 		
 		HashSessionManager hsm = new HashSessionManager();
-		hsm.setStoreDirectory(new File(storeDir));
+		try {
+			hsm.setStoreDirectory(new File(storeDir));
+		} catch (IOException e) {
+			LogKit.logNothing(e);
+		}
 		SessionHandler sh = new SessionHandler();
 		sh.setSessionManager(hsm);
 		webApp.setSessionHandler(sh);
