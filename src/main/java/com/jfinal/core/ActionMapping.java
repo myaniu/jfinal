@@ -78,7 +78,9 @@ final class ActionMapping {
 			Method[] methods = (sonOfController ? controllerClass.getDeclaredMethods() : controllerClass.getMethods());
 			for (Method method : methods) {
 				String methodName = method.getName();
-				if (excludedMethodName.contains(methodName) || method.getParameterTypes().length != 0)
+				//要支持参数绑定，就必须放行参数个数不为0
+				//if (excludedMethodName.contains(methodName) || method.getParameterTypes().length != 0)
+				if (excludedMethodName.contains(methodName))
 					continue ;
 				if (sonOfController && !Modifier.isPublic(method.getModifiers()))
 					continue ;
