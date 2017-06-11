@@ -18,8 +18,10 @@ package com.jfinal.aop;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import com.jfinal.core.Action;
 import com.jfinal.core.Controller;
+
 import net.sf.cglib.proxy.MethodProxy;
 
 /**
@@ -29,7 +31,7 @@ import net.sf.cglib.proxy.MethodProxy;
 public class Invocation {
 	
 	private Action action;
-	private static final Object[] NULL_ARGS = new Object[0];	// Prevent new Object[0] by jvm for paras of action invocation.
+	//private static final Object[] NULL_ARGS = new Object[0];	// Prevent new Object[0] by jvm for paras of action invocation.
 	
 	boolean useInjectTarget;
 	private Object target;
@@ -50,7 +52,7 @@ public class Invocation {
 		this.action = action;
 		this.inters = action.getInterceptors();
 		this.target = controller;
-		this.args = NULL_ARGS;
+		this.args = action.getParameterGetter().get(controller);;
 	}
 	
 	public Invocation(Object target, Method method, Object[] args, MethodProxy methodProxy, Interceptor[] inters) {
