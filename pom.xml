@@ -4,7 +4,7 @@
     <artifactId>jfinal</artifactId>
     <packaging>jar</packaging>
     <name>JFinal</name>
-    <version>3.1-java8-myaniu-v1</version>
+    <version>3.1-java8-v1</version>
     <url>http://www.jfinal.com</url>
     <description>JFinal is a simple, light, rapid,independent, extensible Java WEB + ORM framework. The feature of JFinal looks like ruby on rails especially ActiveRecord.</description>
     
@@ -81,6 +81,7 @@
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-webapp</artifactId>
 		    <version>9.3.19.v20170502</version>
+		    <scope>provided</scope>
 		</dependency>
 		<dependency>
             <groupId>javax.servlet</groupId>
@@ -236,25 +237,6 @@
         </execution>
     </executions>
 </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                  <execution>
-                    <id>sign-artifacts</id>
-                    <phase>verify</phase>
-                    <goals>
-                      <goal>sign</goal>
-                    </goals>
-                  </execution>
-                </executions>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 </project>

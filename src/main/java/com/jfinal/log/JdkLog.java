@@ -44,6 +44,17 @@ public class JdkLog extends Log {
 		return new JdkLog(name);
 	}
 	
+	public void setLevel(int level){
+		switch(level){
+			case LEVEL_DEBUG : log.setLevel(Level.FINE);break;
+			case LEVEL_INFO : log.setLevel(Level.INFO);break;
+			case LEVEL_WARN : log.setLevel(Level.WARNING);break;
+			case LEVEL_ERROR : log.setLevel(Level.SEVERE);break;
+			case LEVEL_FATAL : log.setLevel(Level.SEVERE);break;
+			default : log.setLevel(Level.INFO);break;
+		}
+	}
+	
 	public void debug(String message) {
 		log.logp(Level.FINE, clazzName, Thread.currentThread().getStackTrace()[1].getMethodName(), message);
 	}

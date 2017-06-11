@@ -17,7 +17,9 @@
 package com.jfinal.core;
 
 import java.util.List;
+
 import javax.servlet.ServletContext;
+
 import com.jfinal.config.Constants;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.handler.Handler;
@@ -26,8 +28,8 @@ import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.IPlugin;
 import com.jfinal.render.RenderManager;
-import com.jfinal.server.JettyServerForIDEA;
 import com.jfinal.server.IServer;
+import com.jfinal.server.JettyServerForIDEA;
 import com.jfinal.server.ServerFactory;
 import com.jfinal.token.ITokenCache;
 import com.jfinal.token.TokenManager;
@@ -52,6 +54,22 @@ public final class JFinal {
 	
 	public static JFinal me() {
 		return me;
+	}
+	
+	public boolean isDevMode(){
+		return this.constants.getDevMode();
+	}
+	
+	public boolean isProMode(){
+		return !this.constants.getDevMode();
+	}
+	
+	public void enableDevMode(){
+		this.constants.setDevMode(true);
+	}
+	
+	public void enableProMode(){
+		this.constants.setDevMode(false);
 	}
 	
 	boolean init(JFinalConfig jfinalConfig, ServletContext servletContext) {

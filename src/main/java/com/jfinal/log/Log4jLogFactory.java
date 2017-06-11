@@ -19,7 +19,7 @@ package com.jfinal.log;
 /**
  * Log4jLogFactory.
  */
-public class Log4jLogFactory implements ILogFactory {
+public class Log4jLogFactory extends AbstractLogFactory implements ILogFactory {
 	
 	public Log getLog(Class<?> clazz) {
 		return new Log4jLog(clazz);

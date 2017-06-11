@@ -37,6 +37,10 @@ public class LogManager {
 		Log.setDefaultLogFactory(defaultLogFactory);
 		com.jfinal.kit.LogKit.synchronizeLog();
 	}
+	
+	public void setLevel(int level){
+		Log.setAllLevel(level);
+	}
 }
 
 

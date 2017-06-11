@@ -26,6 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+
 import java.util.Set;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
@@ -88,6 +92,10 @@ public class DbPro {
 		return MAIN;
 	}
 	
+	public final Config getConfig() {
+		return config;
+	}
+
 	<T> List<T> query(Config config, Connection conn, String sql, Object... paras) throws SQLException {
 		List result = new ArrayList();
 		PreparedStatement pst = conn.prepareStatement(sql);
@@ -115,7 +123,7 @@ public class DbPro {
 	/**
 	 * @see #query(String, String, Object...)
 	 */
-	public <T> List<T> query(String sql, Object... paras) {
+	@Nonnull public <T> List<T> query(String sql, Object... paras) {
 		Connection conn = null;
 		try {
 			conn = config.getConnection();
@@ -131,7 +139,7 @@ public class DbPro {
 	 * @see #query(String, Object...)
 	 * @param sql an SQL statement
 	 */
-	public <T> List<T> query(String sql) {		// return  List<object[]> or List<object>
+	@Nonnull public <T> List<T> query(String sql) {		// return  List<object[]> or List<object>
 		return query(sql, NULL_PARA_ARRAY);
 	}
 	
@@ -142,7 +150,7 @@ public class DbPro {
 	 * @return Object[] if your sql has select more than one column,
 	 * 			and it return Object if your sql has select only one column.
 	 */
-	public <T> T queryFirst(String sql, Object... paras) {
+	@CheckForNull public <T> T queryFirst(String sql, Object... paras) {
 		List<T> result = query(sql, paras);
 		return (result.size() > 0 ? result.get(0) : null);
 	}
@@ -151,7 +159,7 @@ public class DbPro {
 	 * @see #queryFirst(String, Object...)
 	 * @param sql an SQL statement
 	 */
-	public <T> T queryFirst(String sql) {
+	@CheckForNull public <T> T queryFirst(String sql) {
 		// return queryFirst(sql, NULL_PARA_ARRAY);
 		List<T> result = query(sql, NULL_PARA_ARRAY);
 		return (result.size() > 0 ? result.get(0) : null);
@@ -165,7 +173,7 @@ public class DbPro {
 	 * @param paras the parameters of sql
 	 * @return <T> T
 	 */
-	public <T> T queryColumn(String sql, Object... paras) {
+	@CheckForNull public <T> T queryColumn(String sql, Object... paras) {
 		List<T> result = query(sql, paras);
 		if (result.size() > 0) {
 			T temp = result.get(0);
@@ -176,111 +184,111 @@ public class DbPro {
 		return null;
 	}
 	
-	public <T> T queryColumn(String sql) {
+	@CheckForNull public <T> T queryColumn(String sql) {
 		return (T)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public String queryStr(String sql, Object... paras) {
+	@CheckForNull public String queryStr(String sql, Object... paras) {
 		return (String)queryColumn(sql, paras);
 	}
 	
-	public String queryStr(String sql) {
+	@CheckForNull public String queryStr(String sql) {
 		return (String)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public Integer queryInt(String sql, Object... paras) {
+	@CheckForNull public Integer queryInt(String sql, Object... paras) {
 		return (Integer)queryColumn(sql, paras);
 	}
 	
-	public Integer queryInt(String sql) {
+	@CheckForNull public Integer queryInt(String sql) {
 		return (Integer)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public Long queryLong(String sql, Object... paras) {
+	@CheckForNull public Long queryLong(String sql, Object... paras) {
 		return (Long)queryColumn(sql, paras);
 	}
 	
-	public Long queryLong(String sql) {
+	@CheckForNull public Long queryLong(String sql) {
 		return (Long)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public Double queryDouble(String sql, Object... paras) {
+	@CheckForNull public Double queryDouble(String sql, Object... paras) {
 		return (Double)queryColumn(sql, paras);
 	}
 	
-	public Double queryDouble(String sql) {
+	@CheckForNull public Double queryDouble(String sql) {
 		return (Double)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public Float queryFloat(String sql, Object... paras) {
+	@CheckForNull public Float queryFloat(String sql, Object... paras) {
 		return (Float)queryColumn(sql, paras);
 	}
 	
-	public Float queryFloat(String sql) {
+	@CheckForNull public Float queryFloat(String sql) {
 		return (Float)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public java.math.BigDecimal queryBigDecimal(String sql, Object... paras) {
+	@CheckForNull public java.math.BigDecimal queryBigDecimal(String sql, Object... paras) {
 		return (java.math.BigDecimal)queryColumn(sql, paras);
 	}
 	
-	public java.math.BigDecimal queryBigDecimal(String sql) {
+	@CheckForNull public java.math.BigDecimal queryBigDecimal(String sql) {
 		return (java.math.BigDecimal)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public byte[] queryBytes(String sql, Object... paras) {
+	@CheckForNull public byte[] queryBytes(String sql, Object... paras) {
 		return (byte[])queryColumn(sql, paras);
 	}
 	
-	public byte[] queryBytes(String sql) {
+	@CheckForNull public byte[] queryBytes(String sql) {
 		return (byte[])queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public java.util.Date queryDate(String sql, Object... paras) {
+	@CheckForNull public java.util.Date queryDate(String sql, Object... paras) {
 		return (java.util.Date)queryColumn(sql, paras);
 	}
 	
-	public java.util.Date queryDate(String sql) {
+	@CheckForNull public java.util.Date queryDate(String sql) {
 		return (java.util.Date)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public java.sql.Time queryTime(String sql, Object... paras) {
+	@CheckForNull public java.sql.Time queryTime(String sql, Object... paras) {
 		return (java.sql.Time)queryColumn(sql, paras);
 	}
 	
-	public java.sql.Time queryTime(String sql) {
+	@CheckForNull public java.sql.Time queryTime(String sql) {
 		return (java.sql.Time)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public java.sql.Timestamp queryTimestamp(String sql, Object... paras) {
+	@CheckForNull public java.sql.Timestamp queryTimestamp(String sql, Object... paras) {
 		return (java.sql.Timestamp)queryColumn(sql, paras);
 	}
 	
-	public java.sql.Timestamp queryTimestamp(String sql) {
+	@CheckForNull public java.sql.Timestamp queryTimestamp(String sql) {
 		return (java.sql.Timestamp)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public Boolean queryBoolean(String sql, Object... paras) {
+	@CheckForNull public Boolean queryBoolean(String sql, Object... paras) {
 		return (Boolean)queryColumn(sql, paras);
 	}
 	
-	public Boolean queryBoolean(String sql) {
+	@CheckForNull public Boolean queryBoolean(String sql) {
 		return (Boolean)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public Short queryShort(String sql, Object... paras) {
+	@CheckForNull public Short queryShort(String sql, Object... paras) {
 		return (Short)queryColumn(sql, paras);
 	}
 	
-	public Short queryShort(String sql) {
+	@CheckForNull public Short queryShort(String sql) {
 		return (Short)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	
-	public Number queryNumber(String sql, Object... paras) {
+	@CheckForNull public Number queryNumber(String sql, Object... paras) {
 		return (Number)queryColumn(sql, paras);
 	}
 	
-	public Number queryNumber(String sql) {
+	@CheckForNull public Number queryNumber(String sql) {
 		return (Number)queryColumn(sql, NULL_PARA_ARRAY);
 	}
 	// 26 queryXxx method under -----------------------------------------------
@@ -336,7 +344,7 @@ public class DbPro {
 	/**
 	 * @see #find(String, String, Object...)
 	 */
-	public List<Record> find(String sql, Object... paras) {
+	@Nonnull public List<Record> find(String sql, Object... paras) {
 		Connection conn = null;
 		try {
 			conn = config.getConnection();
@@ -352,7 +360,7 @@ public class DbPro {
 	 * @see #find(String, String, Object...)
 	 * @param sql the sql statement
 	 */
-	public List<Record> find(String sql) {
+	@Nonnull public List<Record> find(String sql) {
 		return find(sql, NULL_PARA_ARRAY);
 	}
 	
@@ -362,7 +370,7 @@ public class DbPro {
 	 * @param paras the parameters of sql
 	 * @return the Record object
 	 */
-	public Record findFirst(String sql, Object... paras) {
+	@CheckForNull public Record findFirst(String sql, Object... paras) {
 		List<Record> result = find(sql, paras);
 		return result.size() > 0 ? result.get(0) : null;
 	}
@@ -371,7 +379,7 @@ public class DbPro {
 	 * @see #findFirst(String, Object...)
 	 * @param sql an SQL statement
 	 */
-	public Record findFirst(String sql) {
+	@CheckForNull public Record findFirst(String sql) {
 		return findFirst(sql, NULL_PARA_ARRAY);
 	}
 	
@@ -384,7 +392,7 @@ public class DbPro {
 	 * @param tableName the table name of the table
 	 * @param idValue the id value of the record
 	 */
-	public Record findById(String tableName, Object idValue) {
+	@CheckForNull public Record findById(String tableName, Object idValue) {
 		return findById(tableName, config.dialect.getDefaultPrimaryKey(), idValue);
 	}
 	
@@ -399,7 +407,7 @@ public class DbPro {
 	 * @param primaryKey the primary key of the table, composite primary key is separated by comma character: ","
 	 * @param idValue the id value of the record, it can be composite id values
 	 */
-	public Record findById(String tableName, String primaryKey, Object... idValue) {
+	@CheckForNull public Record findById(String tableName, String primaryKey, Object... idValue) {
 		String[] pKeys = primaryKey.split(",");
 		if (pKeys.length != idValue.length)
 			throw new IllegalArgumentException("primary key number must equals id value number");
@@ -491,18 +499,18 @@ public class DbPro {
 	 * @param paras the parameters of sql
 	 * @return the Page object
 	 */
-	public Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, paras);
 	}
 	
 	/**
 	 * @see #paginate(String, int, int, String, String, Object...)
 	 */
-	public Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
+	@Nonnull public Page<Record> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
 		return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, NULL_PARA_ARRAY);
 	}
 	
-	public Page<Record> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<Record> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginate(pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
 	}
 	
@@ -580,11 +588,11 @@ public class DbPro {
 		}
 	}
 	
-	public Page<Record> paginateByFullSql(int pageNumber, int pageSize, String totalRowSql, String findSql, Object... paras) {
+	@Nonnull public Page<Record> paginateByFullSql(int pageNumber, int pageSize, String totalRowSql, String findSql, Object... paras) {
 		return doPaginateByFullSql(pageNumber, pageSize, null, totalRowSql, findSql, paras);
 	}
 	
-	public Page<Record> paginateByFullSql(int pageNumber, int pageSize, boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
+	@Nonnull public Page<Record> paginateByFullSql(int pageNumber, int pageSize, boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
 		return doPaginateByFullSql(pageNumber, pageSize, isGroupBySql, totalRowSql, findSql, paras);
 	}
 	
@@ -807,7 +815,7 @@ public class DbPro {
 	 * @param key the key used to get date from cache
 	 * @return the list of Record
 	 */
-	public List<Record> findByCache(String cacheName, Object key, String sql, Object... paras) {
+	@Nonnull public List<Record> findByCache(String cacheName, Object key, String sql, Object... paras) {
 		ICache cache = config.getCache();
 		List<Record> result = cache.get(cacheName, key);
 		if (result == null) {
@@ -820,7 +828,7 @@ public class DbPro {
 	/**
 	 * @see #findByCache(String, Object, String, Object...)
 	 */
-	public List<Record> findByCache(String cacheName, Object key, String sql) {
+	@Nonnull public List<Record> findByCache(String cacheName, Object key, String sql) {
 		return findByCache(cacheName, key, sql, NULL_PARA_ARRAY);
 	}
 	
@@ -833,7 +841,7 @@ public class DbPro {
 	 * @param paras the parameters of sql
 	 * @return the Record object
 	 */
-	public Record findFirstByCache(String cacheName, Object key, String sql, Object... paras) {
+	@CheckForNull public Record findFirstByCache(String cacheName, Object key, String sql, Object... paras) {
 		ICache cache = config.getCache();
 		Record result = cache.get(cacheName, key);
 		if (result == null) {
@@ -846,7 +854,7 @@ public class DbPro {
 	/**
 	 * @see #findFirstByCache(String, Object, String, Object...)
 	 */
-	public Record findFirstByCache(String cacheName, Object key, String sql) {
+	@CheckForNull public Record findFirstByCache(String cacheName, Object key, String sql) {
 		return findFirstByCache(cacheName, key, sql, NULL_PARA_ARRAY);
 	}
 	
@@ -855,18 +863,18 @@ public class DbPro {
 	 * @see #paginate(int, int, String, String, Object...)
 	 * @return Page
 	 */
-	public Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginateByCache(cacheName, key, pageNumber, pageSize, null, select, sqlExceptSelect, paras);
 	}
 	
 	/**
 	 * @see #paginateByCache(String, Object, int, int, String, String, Object...)
 	 */
-	public Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
+	@Nonnull public Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
 		return doPaginateByCache(cacheName, key, pageNumber, pageSize, null, select, sqlExceptSelect, NULL_PARA_ARRAY);
 	}
 	
-	public Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<Record> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginateByCache(cacheName, key, pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
 	}
 	
@@ -1257,15 +1265,15 @@ public class DbPro {
     	return config.getSqlKit().getSqlPara(key, paras);
     }
     
-    public List<Record> find(SqlPara sqlPara) {
+    @Nonnull public List<Record> find(SqlPara sqlPara) {
     	return find(sqlPara.getSql(), sqlPara.getPara());
     }
     
-    public Record findFirst(SqlPara sqlPara) {
+    @CheckForNull public Record findFirst(SqlPara sqlPara) {
     	return findFirst(sqlPara.getSql(), sqlPara.getPara());
     }
     
-    public Page<Record> paginate(int pageNumber, int pageSize, SqlPara sqlPara) {
+    @Nonnull public Page<Record> paginate(int pageNumber, int pageSize, SqlPara sqlPara) {
     	String[] sqls = PageSqlKit.parsePageSql(sqlPara.getSql());
     	return doPaginate(pageNumber, pageSize, null, sqls[0], sqls[1], sqlPara.getPara());
     }

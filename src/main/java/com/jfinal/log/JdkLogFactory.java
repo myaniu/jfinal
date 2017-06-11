@@ -19,7 +19,7 @@ package com.jfinal.log;
 /**
  * JdkLogFactory.
  */
-public class JdkLogFactory implements ILogFactory {
+public class JdkLogFactory extends AbstractLogFactory implements ILogFactory {
 	
 	public Log getLog(Class<?> clazz) {
 		return new JdkLog(clazz);

@@ -42,6 +42,17 @@ public class Log4jLog extends Log {
 		return new Log4jLog(name);
 	}
 	
+	public void setLevel(int level){
+		switch(level){
+			case LEVEL_DEBUG : log.setLevel(Level.DEBUG);break;
+			case LEVEL_INFO : log.setLevel(Level.INFO);break;
+			case LEVEL_WARN : log.setLevel(Level.WARN);break;
+			case LEVEL_ERROR : log.setLevel(Level.ERROR);break;
+			case LEVEL_FATAL : log.setLevel(Level.FATAL);break;
+			default : log.setLevel(Level.INFO);break;
+		}
+	}
+	
 	public void info(String message) {
 		log.log(callerFQCN, Level.INFO, message, null);
 	}

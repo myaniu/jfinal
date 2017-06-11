@@ -22,11 +22,24 @@ import java.text.SimpleDateFormat;
 /**
  * Convert String to other type object.
  */
-final class TypeConverter {
+public final class TypeConverter {
 	
 	private static final String timeStampPattern = "yyyy-MM-dd HH:mm:ss";
 	private static final String datePattern = "yyyy-MM-dd";
-	private static final int dateLen = datePattern.length();
+	private static final String timePattern = "HH:mm";
+	private static final int timeStampLen = timeStampPattern.length();
+	private static final int timeLen = timePattern.length();
+	private static final String timeStampWithoutSecPattern = "yyyy-MM-dd HH:mm";
+	private static final int timeStampWithoutSecLen = timeStampWithoutSecPattern.length();
+	
+	public static final Object safeConvert(Class<?> clazz, String s){
+		try {
+			return convert(clazz, s);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	/**
 	 * test for all types of mysql
@@ -66,12 +79,14 @@ final class TypeConverter {
 		// java.util.Date 类型专为传统 java bean 带有该类型的 setter 方法转换做准备，万不可去掉
 		// 经测试 JDBC 不会返回 java.util.Data 类型。java.sql.Date, java.sql.Time,java.sql.Timestamp 全部直接继承自 java.util.Data, 所以 getDate可以返回这三类数据
 		if (type == java.util.Date.class) {
-			if (s.length() > dateLen) {	// if (x < timeStampLen) 改用 datePattern 转换，更智能
+			if (s.length() >= timeStampLen) {	// if (x < timeStampLen) 改用 datePattern 转换，更智能
 				// Timestamp format must be yyyy-mm-dd hh:mm:ss[.fffffffff]
 				// return new java.util.Date(java.sql.Timestamp.valueOf(s).getTime());	// error under jdk 64bit(maybe)
 				return new SimpleDateFormat(timeStampPattern).parse(s);
-			}
-			else {
+			}else if(s.length() == timeStampWithoutSecLen){
+				//webix 传输过来的，没有秒
+				return new SimpleDateFormat(timeStampWithoutSecPattern).parse(s);
+			}else {
 				// return new java.util.Date(java.sql.Date.valueOf(s).getTime());	// error under jdk 64bit
 				return new SimpleDateFormat(datePattern).parse(s);
 			}
@@ -79,11 +94,13 @@ final class TypeConverter {
 		
 		// mysql type: date, year
 		if (type == java.sql.Date.class) {
-			if (s.length() > dateLen) {	// if (x < timeStampLen) 改用 datePattern 转换，更智能
+			if (s.length() >= timeStampLen) {	// if (x < timeStampLen) 改用 datePattern 转换，更智能
 				// return new java.sql.Date(java.sql.Timestamp.valueOf(s).getTime());	// error under jdk 64bit(maybe)
 				return new java.sql.Date(new SimpleDateFormat(timeStampPattern).parse(s).getTime());
-			}
-			else {
+			}else if(s.length() == timeStampWithoutSecLen){
+				//webix 传输过来的，没有秒
+				return new java.sql.Date(new SimpleDateFormat(timeStampWithoutSecPattern).parse(s).getTime());
+			}else {
 				// return new java.sql.Date(java.sql.Date.valueOf(s).getTime());	// error under jdk 64bit
 				return new java.sql.Date(new SimpleDateFormat(datePattern).parse(s).getTime());
 			}
@@ -91,15 +108,20 @@ final class TypeConverter {
 		
 		// mysql type: time
 		if (type == java.sql.Time.class) {
+			if(s.length() == timeLen){//时间
+				s = s + ":00";
+			}
 			return java.sql.Time.valueOf(s);
 		}
 		
 		// mysql type: timestamp, datetime
 		if (type == java.sql.Timestamp.class) {
-			if (s.length() > dateLen) {
+			if (s.length() >= timeStampLen) {
 				return java.sql.Timestamp.valueOf(s);
-			}
-			else {
+			}else if(s.length() == timeStampWithoutSecLen){
+				//webix 传输过来的，没有秒
+				return new java.sql.Timestamp(new SimpleDateFormat(timeStampWithoutSecPattern).parse(s).getTime());
+			}else {
 				return new java.sql.Timestamp(new SimpleDateFormat(datePattern).parse(s).getTime());
 			}
 		}

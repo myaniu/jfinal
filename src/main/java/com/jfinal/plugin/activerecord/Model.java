@@ -16,6 +16,8 @@
 
 package com.jfinal.plugin.activerecord;
 
+import static com.jfinal.plugin.activerecord.DbKit.NULL_PARA_ARRAY;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,10 +28,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.jfinal.plugin.activerecord.cache.ICache;
-import static com.jfinal.plugin.activerecord.DbKit.NULL_PARA_ARRAY;
 
 /**
  * Model.
@@ -108,8 +114,12 @@ public abstract class Model<M extends Model> implements Serializable {
 		return DbKit.getConfig(getUsefulClass());
 	}*/
 	
-	private Table getTable() {
+	protected Table getTable() {
 		return TableMapping.me().getTable(getUsefulClass());
+	}
+	
+	public boolean containsAttr(String attr){
+		return attrs.containsKey(attr);
 	}
 	
 	/**
@@ -180,7 +190,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	/**
 	 * Get attribute of any mysql type
 	 */
-	public <T> T get(String attr) {
+	@Nullable public <T> T get(String attr) {
 		return (T)(attrs.get(attr));
 	}
 	
@@ -292,14 +302,14 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param paras the parameters of sql
 	 * @return the Page object
 	 */
-	public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, paras);
 	}
 	
 	/**
 	 * @see #paginate(int, int, String, String, Object...)
 	 */
-	public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
+	@Nonnull public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
 		return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, NULL_PARA_ARRAY);
 	}
 	
@@ -310,7 +320,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * paginate(1, 10, true, "select *", "from user where id>? group by age", 123);
 	 * </pre>
 	 */
-	public Page<M> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<M> paginate(int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginate(pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
 	}
 	
@@ -383,11 +393,11 @@ public abstract class Model<M extends Model> implements Serializable {
 		}
 	}
 	
-	public Page<M> paginateByFullSql(int pageNumber, int pageSize, String totalRowSql, String findSql, Object... paras) {
+	@Nonnull public Page<M> paginateByFullSql(int pageNumber, int pageSize, String totalRowSql, String findSql, Object... paras) {
 		return doPaginateByFullSql(pageNumber, pageSize, null, totalRowSql, findSql, paras);
 	}
 	
-	public Page<M> paginateByFullSql(int pageNumber, int pageSize, boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
+	@Nonnull public Page<M> paginateByFullSql(int pageNumber, int pageSize, boolean isGroupBySql, String totalRowSql, String findSql, Object... paras) {
 		return doPaginateByFullSql(pageNumber, pageSize, isGroupBySql, totalRowSql, findSql, paras);
 	}
 	
@@ -583,7 +593,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param paras the parameters of sql
 	 * @return the list of Model
 	 */
-	public List<M> find(String sql, Object... paras) {
+	@Nonnull public List<M> find(String sql, Object... paras) {
 		Config config = getConfig();
 		Connection conn = null;
 		try {
@@ -599,7 +609,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	/**
 	 * @see #find(String, Object...)
 	 */
-	public List<M> find(String sql) {
+	@Nonnull public List<M> find(String sql) {
 		return find(sql, NULL_PARA_ARRAY);
 	}
 	
@@ -609,7 +619,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param paras the parameters of sql
 	 * @return Model
 	 */
-	public M findFirst(String sql, Object... paras) {
+	@CheckForNull public M findFirst(String sql, Object... paras) {
 		List<M> result = find(sql, paras);
 		return result.size() > 0 ? result.get(0) : null;
 	}
@@ -618,7 +628,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @see #findFirst(String, Object...)
 	 * @param sql an SQL statement
 	 */
-	public M findFirst(String sql) {
+	@CheckForNull public M findFirst(String sql) {
 		return findFirst(sql, NULL_PARA_ARRAY);
 	}
 	
@@ -630,7 +640,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * </pre>
 	 * @param idValue the id value of the model
 	 */
-	public M findById(Object idValue) {
+	@CheckForNull public M findById(Object idValue) {
 		return findByIdLoadColumns(new Object[]{idValue}, "*");
 	}
 	
@@ -642,7 +652,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * </pre>
 	 * @param idValues the composite id values of the model
 	 */
-	public M findById(Object... idValues) {
+	@CheckForNull public M findById(Object... idValues) {
 		return findByIdLoadColumns(idValues, "*");
 	}
 	
@@ -655,7 +665,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param idValue the id value of the model
 	 * @param columns the specific columns to load
 	 */
-	public M findByIdLoadColumns(Object idValue, String columns) {
+	@CheckForNull public M findByIdLoadColumns(Object idValue, String columns) {
 		return findByIdLoadColumns(new Object[]{idValue}, columns);
 	}
 	
@@ -668,7 +678,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param idValues the composite id values of the model
 	 * @param columns the specific columns to load
 	 */
-	public M findByIdLoadColumns(Object[] idValues, String columns) {
+	@CheckForNull public M findByIdLoadColumns(Object[] idValues, String columns) {
 		Table table = getTable();
 		if (table.getPrimaryKey().length != idValues.length)
 			throw new IllegalArgumentException("id values error, need " + table.getPrimaryKey().length + " id value");
@@ -836,7 +846,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param key the key used to get data from cache
 	 * @return the list of Model
 	 */
-	public List<M> findByCache(String cacheName, Object key, String sql, Object... paras) {
+	@Nonnull public List<M> findByCache(String cacheName, Object key, String sql, Object... paras) {
 		ICache cache = getConfig().getCache();
 		List<M> result = cache.get(cacheName, key);
 		if (result == null) {
@@ -849,7 +859,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	/**
 	 * @see #findByCache(String, Object, String, Object...)
 	 */
-	public List<M> findByCache(String cacheName, Object key, String sql) {
+	@Nonnull public List<M> findByCache(String cacheName, Object key, String sql) {
 		return findByCache(cacheName, key, sql, NULL_PARA_ARRAY);
 	}
 	
@@ -861,7 +871,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
 	 * @param paras the parameters of sql
 	 */
-	public M findFirstByCache(String cacheName, Object key, String sql, Object... paras) {
+	@CheckForNull public M findFirstByCache(String cacheName, Object key, String sql, Object... paras) {
 		ICache cache = getConfig().getCache();
 		M result = cache.get(cacheName, key);
 		if (result == null) {
@@ -874,7 +884,7 @@ public abstract class Model<M extends Model> implements Serializable {
 	/**
 	 * @see #findFirstByCache(String, Object, String, Object...)
 	 */
-	public M findFirstByCache(String cacheName, Object key, String sql) {
+	@CheckForNull public M findFirstByCache(String cacheName, Object key, String sql) {
 		return findFirstByCache(cacheName, key, sql, NULL_PARA_ARRAY);
 	}
 	
@@ -885,18 +895,18 @@ public abstract class Model<M extends Model> implements Serializable {
 	 * @param key the key used to get date from cache
 	 * @return Page
 	 */
-	public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginateByCache(cacheName, key, pageNumber, pageSize, null, select, sqlExceptSelect, paras);
 	}
 	
 	/**
 	 * @see #paginateByCache(String, Object, int, int, String, String, Object...)
 	 */
-	public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
+	@Nonnull public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
 		return doPaginateByCache(cacheName, key, pageNumber, pageSize, null, select, sqlExceptSelect, NULL_PARA_ARRAY);
 	}
 	
-	public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
+	@Nonnull public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
 		return doPaginateByCache(cacheName, key, pageNumber, pageSize, isGroupBySql, select, sqlExceptSelect, paras);
 	}
 	
@@ -973,15 +983,15 @@ public abstract class Model<M extends Model> implements Serializable {
 		return getConfig().getSqlKit().getSqlPara(key, paras);
 	}
 	
-	public List<M> find(SqlPara sqlPara) {
+	@Nonnull public List<M> find(SqlPara sqlPara) {
 		return find(sqlPara.getSql(), sqlPara.getPara());
 	}
 	
-	public M findFirst(SqlPara sqlPara) {
+	@CheckForNull public M findFirst(SqlPara sqlPara) {
 		return findFirst(sqlPara.getSql(), sqlPara.getPara());
 	}
 	
-	public Page<M> paginate(int pageNumber, int pageSize, SqlPara sqlPara) {
+	@Nonnull public Page<M> paginate(int pageNumber, int pageSize, SqlPara sqlPara) {
 		String[] sqls = PageSqlKit.parsePageSql(sqlPara.getSql());
 		return doPaginate(pageNumber, pageSize, null, sqls[0], sqls[1], sqlPara.getPara());
 	}

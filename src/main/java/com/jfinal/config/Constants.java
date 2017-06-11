@@ -18,6 +18,8 @@ package com.jfinal.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.jfinal.captcha.CaptchaManager;
 import com.jfinal.captcha.ICaptchaCache;
 import com.jfinal.core.ActionReporter;
@@ -38,7 +40,7 @@ import com.jfinal.token.ITokenCache;
  */
 final public class Constants {
 	
-	private boolean devMode = Const.DEFAULT_DEV_MODE;
+	private AtomicBoolean devMode = new AtomicBoolean(Const.DEFAULT_DEV_MODE);
 	
 	private String baseUploadPath = Const.DEFAULT_BASE_UPLOAD_PATH;
 	private String baseDownloadPath = Const.DEFAULT_BASE_DOWNLOAD_PATH;
@@ -57,11 +59,11 @@ final public class Constants {
 	 * @param devMode the development mode
 	 */
 	public void setDevMode(boolean devMode) {
-		this.devMode = devMode;
+		this.devMode.set(devMode);
 	}
 	
 	public boolean getDevMode() {
-		return devMode;
+		return devMode.get();
 	}
 	
 	/**
