@@ -51,7 +51,8 @@ final class ActionMapping {
 		Set<String> excludedMethodName = new HashSet<String>();
 		Method[] methods = Controller.class.getMethods();
 		for (Method m : methods) {
-			if (m.getParameterTypes().length == 0)
+			//要支持参数绑定，就必须将父类所有方法放到例外处理中
+			//if (m.getParameterTypes().length == 0)
 				excludedMethodName.add(m.getName());
 		}
 		return excludedMethodName;

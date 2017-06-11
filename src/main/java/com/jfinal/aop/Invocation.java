@@ -52,7 +52,7 @@ public class Invocation {
 		this.action = action;
 		this.inters = action.getInterceptors();
 		this.target = controller;
-		this.args = action.getParameterGetter().get(controller);;
+		this.args = action.getParameterGetter().get(controller);
 	}
 	
 	public Invocation(Object target, Method method, Object[] args, MethodProxy methodProxy, Interceptor[] inters) {
